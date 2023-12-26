@@ -1,2 +1,5 @@
 Flask
 Gunicorn
+flask-login
+werkzeug
+python-dotenv
