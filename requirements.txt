@@ -3,3 +3,4 @@ Gunicorn
 flask-login
 werkzeug
 python-dotenv
+flask_sqlalchemy
