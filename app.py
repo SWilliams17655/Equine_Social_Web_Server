@@ -10,6 +10,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home_page():
+    print("Hello to log")
     return render_template('index.html', user_file=None)
 
 if __name__ == '__main__':
