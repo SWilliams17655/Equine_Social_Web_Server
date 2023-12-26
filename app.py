@@ -13,5 +13,13 @@ def home_page():
     print("Hello to log")
     return render_template('index.html', user_file=None)
 
+@app.route("/login", methods=["POST"])
+def login_user():
+    if request.method == "POST":
+        email = request.form['input_email']
+        password = request.form['input_password']
+        print(email)
+        return render_template('index.html', user_file=None)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
