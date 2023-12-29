@@ -107,8 +107,8 @@ def add_user():
                             first_name=request.form['input_first_name'],
                             last_name=request.form['input_last_name'])
             print(new_user)
-            #db.session.add(new_user)
-            #db.session.commit()
+            db.session.add(new_user)
+            db.session.commit()
     return render_template('index.html', user_file=None)
 
 @app.route("/login", methods=["POST"])
