@@ -29,25 +29,25 @@ def load_user(user_id):
 
 # Creates the User table in the EquineSocial Database
 class User(UserMixin, db.Model):
-    email = db.Column(db.String(100), unique=True)
-    id = db.Column(db.Integer, primary_key=True)
-    password = db.Column(db.String(100))
-    first_name = db.Column(db.String(50))
-    last_name = db.Column(db.String(50))
-    city = db.Column(db.String(50))
-    state = db.Column(db.String(50))
-    country = db.Column(db.String(50))
-    birthday = db.Column(db.String(50))
-    profile_image = db.Column(db.String(50))
-    page_image = db.Column(db.String(50))
-    award1 = db.Column(db.String(50))
-    award2 = db.Column(db.String(50))
-    award3 = db.Column(db.String(50))
-    award4 = db.Column(db.String(50))
-    award5 = db.Column(db.String(50))
-    award6 = db.Column(db.String(50))
-    award7 = db.Column(db.String(50))
-    award8 = db.Column(db.String(50))
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    city = db.Column(db.String(50), nullable=True)
+    state = db.Column(db.String(50), nullable=True)
+    country = db.Column(db.String(50), nullable=True)
+    birthday = db.Column(db.String(50), nullable=True)
+    profile_image = db.Column(db.String(50), nullable=True)
+    page_image = db.Column(db.String(50), nullable=True)
+    award1 = db.Column(db.String(50), nullable=True)
+    award2 = db.Column(db.String(50), nullable=True)
+    award3 = db.Column(db.String(50), nullable=True)
+    award4 = db.Column(db.String(50), nullable=True)
+    award5 = db.Column(db.String(50), nullable=True)
+    award6 = db.Column(db.String(50), nullable=True)
+    award7 = db.Column(db.String(50), nullable=True)
+    award8 = db.Column(db.String(50), nullable=True)
 
 
 class Posts(UserMixin, db.Model):
@@ -106,6 +106,7 @@ def add_user():
                                                                               method='pbkdf2:sha256', salt_length=16),
                             first_name=request.form['input_first_name'],
                             last_name=request.form['input_last_name'])
+            print(new_user)
             #db.session.add(new_user)
             #db.session.commit()
     return render_template('index.html', user_file=None)
