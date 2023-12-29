@@ -106,8 +106,8 @@ def add_user():
                                                                               method='pbkdf2:sha256', salt_length=16),
                             first_name=request.form['input_first_name'],
                             last_name=request.form['input_last_name'])
-            db.session.add(new_user)
-            db.session.commit()
+            #db.session.add(new_user)
+            #db.session.commit()
     return render_template('index.html', user_file=None)
 
 @app.route("/login", methods=["POST"])
