@@ -68,14 +68,14 @@
 
         <!-- Image Card-->
         <div class="container col-sm-12 col-md-6 col-lg-6 rounded">
-            <div><img src = '/static/{{user_file.page_image}}' class="img-fluid rounded" alt="No Image"></div>
+            <div><img src = 'https://storage.googleapis.com/equine-social/{{user_file.page_image}}' class="img-fluid rounded" alt="No Image"></div>
 
             <div class="container m-2">
                 <div class="row">
                     {% for image in image_file %}
                         {% if loop.index < 5 %}
                             <div class="col-sm">
-                                <img src='/static/{{image.image_location}}' class="img-thumbnail">
+                                <img src='https://storage.googleapis.com/equine-social/{{image.image_location}}' class="img-thumbnail">
                             </div>
                         {% endif %}
                     {% endfor %}
