@@ -88,13 +88,16 @@ class Horses(UserMixin, db.Model):
     award7 = db.Column(db.String(50))
     award8 = db.Column(db.String(50))
 
+
 # Creates the tables in the EquineSocial Database
 with app.app_context():
     db.create_all()
 
+
 @app.route('/')
 def home_page():
     return render_template('index.html', user_file=None)
+
 
 @app.route("/adduser", methods=["POST"])
 def add_user():
@@ -110,6 +113,7 @@ def add_user():
             db.session.add(new_user)
             db.session.commit()
     return render_template('index.html', user_file=None)
+
 
 @app.route("/login", methods=["POST"])
 def login_user():
@@ -128,6 +132,7 @@ def login_user():
         else:
             return "<h1>Incorrect id or password was used</h1>"
 
+
 @app.route('/my_page/<user_id>')
 @login_required
 def user_page(user_id):
@@ -142,10 +147,12 @@ def user_page(user_id):
     return render_template('user_page.html', user_file=user_file, horse_file=horse_file, post_file=post_file,
                            image_file=image_file)
 
+
 @app.route("/logout")
 def logout_user():
     flask_login.logout_user()
     return redirect('/')
+
 
 @app.route("/addhorse/<user_id>", methods=["POST"])
 @login_required
@@ -153,11 +160,12 @@ def add_horse(user_id):
     if request.method == "POST":
         with app.app_context():
             new_horse = Horses(name=request.form['input_horse_name'],
-                               owner_id = user_id
+                               owner_id=user_id
                                )
             db.session.add(new_horse)
             db.session.commit()
     return redirect(f'/my_page/{user_id}')
+
 
 @app.route("/updateuser/<user_id>", methods=["POST"])
 def update_user(user_id):
@@ -250,6 +258,7 @@ def add_user_post(user_id, submit_id):
             db.session.add(new_post)
             db.session.commit()
     return redirect(f'/my_page/{user_id}')
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
