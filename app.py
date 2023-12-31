@@ -1,13 +1,19 @@
 import flask_login
 import werkzeug.security
 import os
+import boto3
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 from flask_login import UserMixin, LoginManager, login_required
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
 from datetime import date
 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = "uploads"
+
 load_dotenv()
 
 app.config['SECRET_KEY'] = os.getenv('FLASK_KEY')
@@ -39,8 +45,8 @@ class User(UserMixin, db.Model):
     state = db.Column(db.String(50), nullable=True)
     country = db.Column(db.String(50), nullable=True)
     birthday = db.Column(db.String(50), nullable=True)
-    profile_image = db.Column(db.String(50), nullable=True)
-    page_image = db.Column(db.String(50), nullable=True)
+    profile_image = db.Column(db.String(250), nullable=True)
+    page_image = db.Column(db.String(250), nullable=True)
     award1 = db.Column(db.String(50), nullable=True)
     award2 = db.Column(db.String(50), nullable=True)
     award3 = db.Column(db.String(50), nullable=True)
@@ -98,6 +104,35 @@ with app.app_context():
 def home_page():
     return render_template('index.html', user_file=None)
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/upload/<user_id>', methods=['post'])
+def upload(user_id):
+    if request.method == 'POST':
+        file = request.files['file']
+        print(file.filename)
+        f = secure_filename(file.filename)
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], f))
+
+        s3 = boto3.client('s3',
+                          aws_access_key_id=os.getenv('AWS_ACCESS_KEY'),
+                          aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')
+                          )
+        upload_filename = f"{user_id}_login_image.jpg"
+        print(f"Uploading new image: {upload_filename}")
+        s3.upload_file(
+                      Bucket=os.getenv('BUCKET_NAME'),
+                      Filename=os.path.join(basedir, app.config['UPLOAD_FOLDER'], f),
+                      Key=f"{user_id}_login_image.jpg"
+                  )
+        db.session.execute(db.update(User)
+                           .where(User.id == user_id)
+                           .values(page_image=upload_filename)
+                           )
+        db.session.commit()
+        return redirect(f'/my_page/{user_id}')
 
 @app.route("/adduser", methods=["POST"])
 def add_user():
@@ -170,7 +205,6 @@ def add_horse(user_id):
 @app.route("/updateuser/<user_id>", methods=["POST"])
 def update_user(user_id):
     if request.method == "POST":
-        print("In Update")
         city_value = request.form['input_city']
         if city_value != "":
             db.session.execute(db.update(User)
