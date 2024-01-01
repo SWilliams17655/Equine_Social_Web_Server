@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import UserMixin, LoginManager, login_required
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from werkzeug.utils import secure_filename
 from datetime import date
 
@@ -102,12 +103,12 @@ with app.app_context():
 
 @app.route('/')
 def home_page():
-    return render_template('index.html', user_file=None)
+    return render_template('index.html', message="", user_file=None)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/upload/<user_id>', methods=['post'])
+@app.route('/upload/<user_id>', methods=["POST"])
 def upload(user_id):
     if request.method == 'POST':
         file = request.files['file']
@@ -137,17 +138,15 @@ def upload(user_id):
 @app.route("/adduser", methods=["POST"])
 def add_user():
     if request.method == "POST":
-        print("User adding user file.")
         with app.app_context():
             new_user = User(email=request.form['input_email'],
                             password=werkzeug.security.generate_password_hash(request.form['input_password'],
                                                                               method='pbkdf2:sha256', salt_length=16),
                             first_name=request.form['input_first_name'],
                             last_name=request.form['input_last_name'])
-            print(new_user)
             db.session.add(new_user)
             db.session.commit()
-    return render_template('index.html', user_file=None)
+            return render_template('index.html', user_file=None, message="New account created. Welcome to EquineSocial, please log in to set up your account.")
 
 
 @app.route("/login", methods=["POST"])
@@ -155,17 +154,18 @@ def login_user():
     if request.method == "POST":
         email = request.form['input_email']
         password = request.form['input_password']
-        result = db.session.execute(db.select(User).where(User.email == email))
+        result = db.session.execute(db.select(User).where(func.lower(User.email) == func.lower(email)))
         user = result.scalar()
 
         if user is None:
-            return "<h1>Incorrect id was used</h1>"
+            return render_template('index.html', user_file=None, message="Account does not exist, would you like to create an account?")
 
         if werkzeug.security.check_password_hash(user.password, password):
             flask_login.login_user(user)
             return redirect(f'/my_page/{user.id}')
         else:
-            return "<h1>Incorrect id or password was used</h1>"
+            return render_template('index.html', user_file=None, message="Incorrect email or password, please try again.")
+
 
 
 @app.route('/my_page/<user_id>')
