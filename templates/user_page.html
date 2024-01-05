@@ -20,7 +20,7 @@
 
     <div class = "row m-4">
         <!-- Image Card for Large Image. Only visible in small mobile.-->
-        <div class="container col-sm-12 col-md-12 col-lg-6 rounded d-xs-block d-sm-block d-md-block d-lg-none">
+        <div class="container col-sm-12 col-lg-6 rounded d-md-block d-lg-none">
             <div class = "d-flex justify-content-end">
                 <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#userPhotoUpdateModal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -31,10 +31,16 @@
             </div>
             <div><img src = 'https://s3.amazonaws.com/autonomyai.net/{{user_file.page_image}}' class="img-fluid rounded" alt="No Image"></div>
         </div>
-        <div class="container col-sm-12 col-md-12 col-lg-6">
+        <div class="container col-sm-12 col-lg-6">
 
             <!-- Profile Card-->
             <div class = "container rounded p-3" id="post">
+
+                <div class="d-flex align-items-center">
+                    <img class="rounded-circle shadow-4-strong m-3" style="width: 80px; height: 80px" src="https://s3.amazonaws.com/autonomyai.net/{{user_file.page_image}}">
+                    <h1>{{ user_file.first_name + " " + user_file.last_name}}</h1>
+                </div>
+                <hr>
                 <div class = "d-flex justify-content-end">
                     <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#userUpdateModal">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -43,12 +49,6 @@
                         </svg>
                     </button>
                 </div>
-                <div class="d-flex align-items-center">
-                    <img class="rounded-circle shadow-4-strong m-3" style="width: 80px; height: 80px" src="https://s3.amazonaws.com/autonomyai.net/{{user_file.page_image}}">
-                    <h1>{{ user_file.first_name + " " + user_file.last_name}}</h1>
-                </div>
-
-                <hr>
                 {% if user_file.city != None and user_file.state != None and user_file.country != None  %}
                     <h5>{{ user_file.city + ", " + user_file.state + " " + user_file.country}}</h5>
                     <br>
@@ -57,38 +57,38 @@
                     <h5>Awards</h5>
                 {% endif %}
                 <ul>
-                    {% if user_file.award1 != None %}
+                    {% if user_file.award1 != " " %}
                         <li>{{ user_file.award1}}</li>
                     {% endif %}
-                    {% if user_file.award2 != None %}
+                    {% if user_file.award2 != " " %}
                         <li>{{ user_file.award2}}</li>
                     {% endif %}
-                    {% if user_file.award3 != None %}
+                    {% if user_file.award3 != " " %}
                         <li>{{ user_file.award3}}</li>
                     {% endif %}
-                    {% if user_file.award4 != None %}
+                    {% if user_file.award4 != " " %}
                         <li>{{ user_file.award4}}</li>
                     {% endif %}
-                    {% if user_file.award5 != None %}
+                    {% if user_file.award5 != " " %}
                         <li>{{ user_file.award5}}</li>
                     {% endif %}
-                    {% if user_file.award6 != None %}
+                    {% if user_file.award6 != " " %}
                         <li>{{ user_file.award6}}</li>
                     {% endif %}
-                    {% if user_file.award7 != None %}
+                    {% if user_file.award7 != " " %}
                         <li>{{ user_file.award7}}</li>
                     {% endif %}
-                    {% if user_file.award8 != None %}
+                    {% if user_file.award8 != " " %}
                         <li>{{ user_file.award8}}</li>
                     {% endif %}
                 </ul>
             </div>
 
             <!--Horses Card-->
-            <div class = "container col-sm-12 col-md-12 col-lg-6 rounded p-3 mt-4" id="post">
+            <div class = "container rounded p-3 mt-4" id="post">
                 <div class = "d-flex justify-content-end">
                     <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#createHorseModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                         </svg>
@@ -104,10 +104,10 @@
         </div>
 
         <!-- Image Card for Large Image. Hidden and moved to top when in mobile.-->
-        <div class="container col-sm-12 col-lg-6 rounded d-xs-none d-sm-none d-md-none d-lg-block">
+        <div class="container col-sm-12 col-sm-12 col-lg-6 rounded d-none d-lg-block">
             <div class = "d-flex justify-content-end">
                 <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#userPhotoUpdateModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                     <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                     </svg>
@@ -117,16 +117,19 @@
         </div>
     </div>
 
+
+
     <!-- Post Card -->
     <div class = "row m-4">
-        <div class="d-flex justify-content-end mt-3">
+        <hr>
+        <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userPostModal">Post to {{ user_file.first_name }}'s Wall</button>
         </div>
     </div>
     <div class = "row m-4">
         {% for post in post_file%}
-            <div class = "row m-4 p-1">
-                <div class = "row container rounded m-1" id="post">
+            <div class = "row mt-2 p-1">
+                <div class = "row container rounded" id="post">
                     <div class="d-flex align-items-center">
                         <img class="rounded-circle shadow-4-strong m-3" style="width: 80px; height: 80px" src="https://s3.amazonaws.com/autonomyai.net/{{user_file.page_image}}">
                         <h1>{{ post.title }}</h1>
@@ -150,6 +153,18 @@
                 <div class="modal-header"><h5 id="modal">Update Information</h5></div>
                 <form action={{url_for('update_user', user_id = user_file.id)}} method="post">
                     <div class="modal-body" id="modal">
+                        <div class="row mb-3">
+                            <label for="input_first_name" class = "col-sm-3 col-form-label">First Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class = "form-control" placeholder="{{user_file.first_name}}" aria-label="First Name" name="input_first_name">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="input_last_name" class = "col-sm-3 col-form-label">Last Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class = "form-control" placeholder="{{user_file.last_name}}" aria-label="Last Name" name="input_last_name">
+                            </div>
+                        </div>
                         <div class="row mb-3">
                             <label for="input_city" class = "col-sm-3 col-form-label">City</label>
                             <div class="col-sm-9">

@@ -2,6 +2,8 @@ import flask_login
 import werkzeug.security
 import os
 import boto3
+import string
+import random
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import UserMixin, LoginManager, login_required
@@ -100,6 +102,11 @@ class Horses(UserMixin, db.Model):
 with app.app_context():
     db.create_all()
 
+def get_random_string(length):
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str
 
 @app.route('/')
 def home_page():
@@ -121,12 +128,19 @@ def upload(user_id):
                           aws_access_key_id=os.getenv('AWS_ACCESS_KEY'),
                           aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS')
                           )
-        upload_filename = f"{user_id}_login_image.jpg"
+        result = db.session.execute(db.select(User).where(User.id == user_id))
+        user_file = result.scalar()
+        s3.delete_object(
+                        Bucket=os.getenv('BUCKET_NAME'),
+                        Key=user_file.page_image,
+        )
+        random_string = get_random_string(12)
+        upload_filename = f"{user_id}_{random_string}_{f}"
         print(f"Uploading new image: {upload_filename}")
         s3.upload_file(
                       Bucket=os.getenv('BUCKET_NAME'),
                       Filename=os.path.join(basedir, app.config['UPLOAD_FOLDER'], f),
-                      Key=f"{user_id}_login_image.jpg"
+                      Key=upload_filename
                   )
         db.session.execute(db.update(User)
                            .where(User.id == user_id)
@@ -143,7 +157,22 @@ def add_user():
                             password=werkzeug.security.generate_password_hash(request.form['input_password'],
                                                                               method='pbkdf2:sha256', salt_length=16),
                             first_name=request.form['input_first_name'],
-                            last_name=request.form['input_last_name'])
+                            last_name=request.form['input_last_name'],
+                            city = "",
+                            state = "",
+                            country = "",
+                            birthday = "",
+                            profile_image = "",
+                            page_image = "",
+                            award1 = "",
+                            award2 = "",
+                            award3 = "",
+                            award4 = "",
+                            award5 = "",
+                            award6 = "",
+                            award7 = "",
+                            award8 = ""
+                            )
             db.session.add(new_user)
             db.session.commit()
             return render_template('index.html', user_file=None, message="New account created. Welcome to EquineSocial, please log in to set up your account.")
@@ -205,6 +234,18 @@ def add_horse(user_id):
 @app.route("/updateuser/<user_id>", methods=["POST"])
 def update_user(user_id):
     if request.method == "POST":
+        first_name_value = request.form['input_first_name']
+        if first_name_value != "":
+            db.session.execute(db.update(User)
+                               .where(User.id == user_id)
+                               .values(first_name=first_name_value)
+                               )
+        last_name_value = request.form['input_last_name']
+        if last_name_value != "":
+            db.session.execute(db.update(User)
+                               .where(User.id == user_id)
+                               .values(last_name=last_name_value)
+                               )
         city_value = request.form['input_city']
         if city_value != "":
             db.session.execute(db.update(User)
@@ -213,7 +254,7 @@ def update_user(user_id):
                                )
 
         state_value = request.form['input_state']
-        print(state_value)
+
         if state_value != "":
             db.session.execute(db.update(User)
                                .where(User.id == user_id)
@@ -269,6 +310,12 @@ def update_user(user_id):
             db.session.execute(db.update(User)
                                .where(User.id == user_id)
                                .values(award7=award_7)
+                               )
+        award_8 = request.form['input_award_8']
+        if award_8 != "":
+            db.session.execute(db.update(User)
+                               .where(User.id == user_id)
+                               .values(award8=award_8)
                                )
 
         db.session.commit()
