@@ -21,14 +21,16 @@
     <div class = "row m-4">
         <!-- Image Card for Large Image. Only visible in small mobile.-->
         <div class="container col-sm-12 col-lg-6 rounded d-md-block d-lg-none">
-            <div class = "d-flex justify-content-end">
-                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#userPhotoUpdateModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                    </svg>
-                </button>
-            </div>
+            {% if logged_in_user_file.id.id == user_file.id %}
+                <div class = "d-flex justify-content-end">
+                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#userPhotoUpdateModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                        </svg>
+                    </button>
+                </div>
+            {% endif %}
             <div><img src = 'https://s3.amazonaws.com/autonomyai.net/{{user_file.page_image}}' class="img-fluid rounded" alt="No Image"></div>
         </div>
         <div class="container col-sm-12 col-lg-6">
@@ -41,14 +43,16 @@
                     <h1>{{ user_file.first_name + " " + user_file.last_name}}</h1>
                 </div>
                 <hr>
-                <div class = "d-flex justify-content-end">
-                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#userUpdateModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                        </svg>
-                    </button>
-                </div>
+                {% if logged_in_user_file.id == user_file.id %}
+                    <div class = "d-flex justify-content-end">
+                        <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#userUpdateModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                            </svg>
+                        </button>
+                    </div>
+                {% endif %}
                 {% if user_file.city != None and user_file.state != None and user_file.country != None  %}
                     <h5>{{ user_file.city + ", " + user_file.state + " " + user_file.country}}</h5>
                     <br>
@@ -86,14 +90,16 @@
 
             <!--Horses Card-->
             <div class = "container rounded p-3 mt-4" id="post">
-                <div class = "d-flex justify-content-end">
-                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#createHorseModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                        </svg>
-                    </button>
-                </div>
+                {% if logged_in_user_file.id == user_file.id %}
+                    <div class = "d-flex justify-content-end">
+                        <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#createHorseModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                            </svg>
+                        </button>
+                    </div>
+                {% endif %}
                 <h5>Horses</h5>
                 <ul>
                     {% for horse in horse_file %}
@@ -105,14 +111,16 @@
 
         <!-- Image Card for Large Image. Hidden and moved to top when in mobile.-->
         <div class="container col-sm-12 col-sm-12 col-lg-6 rounded d-none d-lg-block">
-            <div class = "d-flex justify-content-end">
-                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#userPhotoUpdateModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                    </svg>
-                </button>
-            </div>
+            {% if logged_in_user_file.id == user_file.id %}
+                <div class = "d-flex justify-content-end">
+                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#userPhotoUpdateModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                        </svg>
+                    </button>
+                </div>
+            {% endif %}
             <div><img src = 'https://s3.amazonaws.com/autonomyai.net/{{user_file.page_image}}' class="img-fluid rounded" alt="No Image"></div>
         </div>
     </div>
@@ -122,9 +130,11 @@
     <!-- Post Card -->
     <div class = "row m-4">
         <hr>
-        <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userPostModal">Post to {{ user_file.first_name }}'s Wall</button>
-        </div>
+        {% if logged_in_user_file.id == user_file.id %}
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userPostModal">Post to {{ user_file.first_name }}'s Wall</button>
+            </div>
+        {% endif %}
     </div>
     <div class = "row m-4">
         {% for post in post_file%}
@@ -323,12 +333,16 @@
     <div class="modal fade" id="userPhotoUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header"><h5 id="modal">Upload page photo</h5></div>
                 <form action="{{url_for('upload', user_id = user_file.id)}}" method="post" enctype="multipart/form-data">
-                    <p class="card-text">Choose a .jpg to upload.</p>
-                    <input type="file" name="file" value="file">
-                    <hr>
-                    <input type="submit" name="upload" value="Upload" class="btn btn-success">
+                    <div class="modal-header"><h5 id="modal">Upload Photo</h5></div>
+                    <div class="modal-body" id="modal">
+                        <div class="row mb-3">
+                            <input type="file" name="file" value="file" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" name="upload" value="Upload" class="btn btn-success">
+                    </div>
                 </form>
             </div>
         </div>
@@ -353,16 +367,11 @@
                                 <textarea class = "form-control" rows="5" placeholder="Post" aria-label="Post" name="input_post"></textarea>
                             </div>
                         </div>
-                        <div>
-                            <label for="input_post">Default file input example</label>
-                            <input type="file" class="form-control" name="postPhoto">
-                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
-
                 </form>
             </div>
         </div>

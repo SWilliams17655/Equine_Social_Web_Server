@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import UserMixin, LoginManager, login_required
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
 from werkzeug.utils import secure_filename
 from datetime import date
 
@@ -130,10 +129,15 @@ def upload(user_id):
                           )
         result = db.session.execute(db.select(User).where(User.id == user_id))
         user_file = result.scalar()
-        s3.delete_object(
+        try:
+            s3.delete_object(
                         Bucket=os.getenv('BUCKET_NAME'),
                         Key=user_file.page_image,
-        )
+            )
+        except:
+            print("Error: An error occurred while deleting the file. Most common cause is file did not exist.")
+        finally:
+            print("The deleting operation is complete.")
         random_string = get_random_string(12)
         upload_filename = f"{user_id}_{random_string}_{f}"
         print(f"Uploading new image: {upload_filename}")
@@ -147,7 +151,7 @@ def upload(user_id):
                            .values(page_image=upload_filename)
                            )
         db.session.commit()
-        return redirect(f'/my_page/{user_id}')
+        return redirect(f'/user_page/{user_id}')
 
 @app.route("/adduser", methods=["POST"])
 def add_user():
@@ -191,13 +195,13 @@ def login_user():
 
         if werkzeug.security.check_password_hash(user.password, password):
             flask_login.login_user(user)
-            return redirect(f'/my_page/{user.id}')
+            return redirect(f'/user_page/{user.id}')
         else:
             return render_template('index.html', user_file=None, message="Incorrect email or password, please try again.")
 
 
 
-@app.route('/my_page/<user_id>')
+@app.route('/user_page/<user_id>')
 @login_required
 def user_page(user_id):
     result = db.session.execute(db.select(User).where(User.id == user_id))
@@ -208,9 +212,16 @@ def user_page(user_id):
     horse_file = result.scalars()
     result = db.session.execute(db.select(Images).where(Images.image_owner == user_id))
     image_file = result.scalars()
-    return render_template('user_page.html', user_file=user_file, horse_file=horse_file, post_file=post_file,
+    return render_template('user_page.html', logged_in_user_file=flask_login.current_user, user_file=user_file, horse_file=horse_file, post_file=post_file,
                            image_file=image_file)
 
+@app.route('/my_connections/<user_id>')
+@login_required
+def user_connections(user_id):
+    result = db.session.execute(db.select(User).where(User.id == user_id))
+    user_file = result.scalar()
+    connections_file = db.session.query(User).all()
+    return render_template("connections_page.html", logged_in_user_file=flask_login.current_user, user_file=user_file, connections_file=connections_file)
 
 @app.route("/logout")
 def logout_user():
@@ -228,7 +239,7 @@ def add_horse(user_id):
                                )
             db.session.add(new_horse)
             db.session.commit()
-    return redirect(f'/my_page/{user_id}')
+    return redirect(f'/user_page/{user_id}')
 
 
 @app.route("/updateuser/<user_id>", methods=["POST"])
@@ -320,7 +331,7 @@ def update_user(user_id):
 
         db.session.commit()
 
-        return redirect(f'/my_page/{user_id}')
+        return redirect(f'/user_page/{user_id}')
 
 
 @app.route("/adduserpost/<user_id>/<submit_id>", methods=["POST"])
@@ -333,12 +344,10 @@ def add_user_post(user_id, submit_id):
                              title=request.form['input_title'],
                              date=date.today(),
                              text=request.form['input_post'])
-            photo = request.form['postPhoto']
-            print(photo)
 
             db.session.add(new_post)
             db.session.commit()
-    return redirect(f'/my_page/{user_id}')
+    return redirect(f'/user_page/{user_id}')
 
 
 if __name__ == '__main__':
