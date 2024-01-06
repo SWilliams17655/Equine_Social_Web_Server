@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import UserMixin, LoginManager, login_required
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from werkzeug.utils import secure_filename
 from datetime import date
 
@@ -109,16 +110,16 @@ def get_random_string(length):
 
 @app.route('/')
 def home_page():
-    return render_template('index.html', message="", user_file=None)
+    return render_template('index.html', message="", logged_in_user_file=None)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/upload/<user_id>', methods=["POST"])
-def upload(user_id):
+@app.route('/upload_photo/', methods=["POST"])
+def upload():
     if request.method == 'POST':
+        user_id = flask_login.current_user.id
         file = request.files['file']
-        print(file.filename)
         f = secure_filename(file.filename)
         basedir = os.path.abspath(os.path.dirname(__file__))
         file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], f))
@@ -151,6 +152,7 @@ def upload(user_id):
                            .values(page_image=upload_filename)
                            )
         db.session.commit()
+        os.remove(os.path.join(basedir, app.config['UPLOAD_FOLDER'], f))
         return redirect(f'/user_page/{user_id}')
 
 @app.route("/adduser", methods=["POST"])
@@ -162,24 +164,10 @@ def add_user():
                                                                               method='pbkdf2:sha256', salt_length=16),
                             first_name=request.form['input_first_name'],
                             last_name=request.form['input_last_name'],
-                            city = "",
-                            state = "",
-                            country = "",
-                            birthday = "",
-                            profile_image = "",
-                            page_image = "",
-                            award1 = "",
-                            award2 = "",
-                            award3 = "",
-                            award4 = "",
-                            award5 = "",
-                            award6 = "",
-                            award7 = "",
-                            award8 = ""
                             )
             db.session.add(new_user)
             db.session.commit()
-            return render_template('index.html', user_file=None, message="New account created. Welcome to EquineSocial, please log in to set up your account.")
+            return render_template('index.html', user_file=None, logged_in_user_file=None, message="New account created. Welcome to EquineSocial, please log in to set up your account.")
 
 
 @app.route("/login", methods=["POST"])
@@ -191,13 +179,13 @@ def login_user():
         user = result.scalar()
 
         if user is None:
-            return render_template('index.html', user_file=None, message="Account does not exist, would you like to create an account?")
+            return render_template('index.html', user_file=None, logged_in_user_file=None, message="Account does not exist, would you like to create an account?")
 
         if werkzeug.security.check_password_hash(user.password, password):
             flask_login.login_user(user)
             return redirect(f'/user_page/{user.id}')
         else:
-            return render_template('index.html', user_file=None, message="Incorrect email or password, please try again.")
+            return render_template('index.html', user_file=None, logged_in_user_file=None, message="Incorrect email or password, please try again.")
 
 
 
@@ -215,10 +203,10 @@ def user_page(user_id):
     return render_template('user_page.html', logged_in_user_file=flask_login.current_user, user_file=user_file, horse_file=horse_file, post_file=post_file,
                            image_file=image_file)
 
-@app.route('/my_connections/<user_id>')
+@app.route('/my_connections/')
 @login_required
-def user_connections(user_id):
-    result = db.session.execute(db.select(User).where(User.id == user_id))
+def user_connections():
+    result = db.session.execute(db.select(User).where(User.id == flask_login.current_user.id))
     user_file = result.scalar()
     connections_file = db.session.query(User).all()
     return render_template("connections_page.html", logged_in_user_file=flask_login.current_user, user_file=user_file, connections_file=connections_file)
@@ -229,38 +217,38 @@ def logout_user():
     return redirect('/')
 
 
-@app.route("/addhorse/<user_id>", methods=["POST"])
+@app.route("/addhorse", methods=["POST"])
 @login_required
-def add_horse(user_id):
+def add_horse():
     if request.method == "POST":
         with app.app_context():
             new_horse = Horses(name=request.form['input_horse_name'],
-                               owner_id=user_id
+                               owner_id=flask_login.current_user.id
                                )
             db.session.add(new_horse)
             db.session.commit()
-    return redirect(f'/user_page/{user_id}')
+    return redirect(f'/user_page/{flask_login.current_user.id}')
 
 
-@app.route("/updateuser/<user_id>", methods=["POST"])
-def update_user(user_id):
+@app.route("/updateuser", methods=["POST"])
+def update_user():
     if request.method == "POST":
         first_name_value = request.form['input_first_name']
         if first_name_value != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(first_name=first_name_value)
                                )
         last_name_value = request.form['input_last_name']
         if last_name_value != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(last_name=last_name_value)
                                )
         city_value = request.form['input_city']
         if city_value != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(city=city_value)
                                )
 
@@ -268,70 +256,70 @@ def update_user(user_id):
 
         if state_value != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(state=state_value)
                                )
 
         country_value = request.form['input_country']
         if country_value != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(country=country_value)
                                )
 
         award_1 = request.form['input_award_1']
         if award_1 != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(award1=award_1)
                                )
         award_2 = request.form['input_award_2']
         if award_2 != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(award2=award_2)
                                )
         award_3 = request.form['input_award_3']
         if award_3 != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(award3=award_3)
                                )
         award_4 = request.form['input_award_4']
         if award_4 != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(award4=award_4)
                                )
 
         award_5 = request.form['input_award_5']
         if award_5 != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(award5=award_5)
                                )
         award_6 = request.form['input_award_6']
         if award_6 != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(award6=award_6)
                                )
         award_7 = request.form['input_award_7']
         if award_7 != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(award7=award_7)
                                )
         award_8 = request.form['input_award_8']
         if award_8 != "":
             db.session.execute(db.update(User)
-                               .where(User.id == user_id)
+                               .where(User.id == flask_login.current_user.id)
                                .values(award8=award_8)
                                )
 
         db.session.commit()
 
-        return redirect(f'/user_page/{user_id}')
+        return redirect(f'/user_page/{flask_login.current_user.id}')
 
 
 @app.route("/adduserpost/<user_id>/<submit_id>", methods=["POST"])
